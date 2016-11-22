@@ -7,19 +7,19 @@ from mininet.node import OVSSwitch
 from mininet.node import Controller, OVSController
 from mininet.util import dumpNodeConnections
 
-class Switch(OVSSwitch):
+class STPSwitch(OVSSwitch):
     prio = 1000
     def start(self, *args, **kwargs):
-        OVSSwitch.start(self, *args, **kwargs)
-        Switch.prio += 1
-        self.cmd('ovs-vsctl set-fail-mode', self, 'standalone')
-        self.cmd('ovs-vsctl set Bridge', self, 'stp_enable=true', 'other_config:stp-priority=%d' % Switch.prio)
+        OVSSwitch.start(self, *args, **kwargs )
+        STPSwitch.prio += 1
+        self.cmd ('ovs-vsctl set-fail-mode', self, 'standalone')
+        self.cmd('ovs-vsctl set Bridge', self, 'stp_enable=true', 'other_config:stp-priority=%d' % STPSwitch.prio)
 
-switches = {'ovs-stp': Switch}
+switches = {'ovs-stp': STPSwitch}
 
 class clos(Topo):
-    def __init__(self, numberOfLeafs, numberOfSpines):
-        Topo.__init__(self)
+    def __init__(self, numberOfLeafs, numberOfSpines, *args, **kwargs):
+        Topo.__init__(self, *args, **kwargs)
 
         spines = self.create(self.addSwitch, "spine", numberOfSpines, False)
         leafs = self.create(self.addSwitch, "leaf", numberOfLeafs, False)
@@ -32,7 +32,7 @@ class clos(Topo):
             if (routed == True):
                 devices.append (func(prefix + str(i + 1), ip='10.0.0.' + str(i + 1)))
             else:
-                devices.append(func(prefix + str(i + 1), cls=Switch))
+                devices.append(func(prefix + str(i + 1), cls=STPSwitch))
         return devices
 
     def link(self, spines, leafs, hosts):
@@ -48,8 +48,7 @@ topos = { 'clos': clos}
 
 def initWithParams(numberOfSpines, numberOfLeafs):
     topo = clos(numberOfSpines, numberOfLeafs)
-    info('Creating Network...')
-    net = Mininet(topo=topo, controller=OVSController, switch=OVSSWitch)
+    net = Mininet(topo=topo, switch=STPSwitch)
     net.start()
     dumpNodeConnections(net.values())
     CLI(net)
