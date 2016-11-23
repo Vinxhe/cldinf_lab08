@@ -48,7 +48,7 @@ topos = { 'clos': clos}
 
 def initWithParams(numberOfSpines, numberOfLeafs):
     topo = clos(numberOfSpines, numberOfLeafs)
-    net = Mininet(topo=topo, switch=STPSwitch)
+    net = Mininet(topo=topo,controller=OVSController, switch=STPSwitch)
     net.start()
     dumpNodeConnections(net.values())
     CLI(net)
