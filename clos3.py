@@ -31,6 +31,7 @@ class clos(Topo):
             index += 1
             for spine in spines:
                 self.addLink(leaf, spine)
+     
 
 topos = { 'clos': clos}
 

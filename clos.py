@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys
+import sys, cmd
 from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.cli import CLI
@@ -32,7 +32,7 @@ class clos(Topo):
             if (routed == True):
                 devices.append (func(prefix + str(i + 1), ip='10.0.0.' + str(i + 1)))
             else:
-                devices.append(func(prefix + str(i + 1), cls=STPSwitch))
+                devices.append(func(prefix + str(i + 1)))
         return devices
 
     def link(self, spines, leafs, hosts):
