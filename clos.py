@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys, cmd
+import sys
 from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.cli import CLI
